@@ -1,3 +1,8 @@
+travel_agency:
+    resource: "@TravelAgencyBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
