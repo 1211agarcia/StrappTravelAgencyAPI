@@ -3,6 +3,7 @@
 namespace StrApp\TravelAgencyApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use StrApp\TravelAgencyApiBundle\Entity\Travel;
 
 /**
  * Passenger
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="passenger")
  * @ORM\Entity(repositoryClass="StrApp\TravelAgencyApiBundle\Repository\PassengerRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Passenger
 {
@@ -25,6 +27,69 @@ class Passenger
      */
     private $id;
 
+    /**************************************
+    * INICIO DE BLOQUE ATRIBUTOS COMUNES  *
+    *                                     *
+    * Atributos para labores de auditoria *
+    **************************************/
+    
+    /**
+     * Guarda la fecha de actualizacion
+     * @var \DateTime
+     * @ORM\Column(name="updated", type="datetime")
+     *
+     */
+     private $updated;
+     /**
+     * Guarda la fecha de actualizacion
+     * @var \DateTime
+     * @ORM\Column(name="created", type="datetime")
+     */
+     private $created;
+ 
+     /**
+      * Set updated
+      * @ORM\PreUpdate  
+      */
+    public function setUpdated()
+    {
+         $this->updated = new \DateTime();
+    }
+ 
+     /**
+      * Get updated
+      *
+      * @return \DateTime
+      */
+     public function getUpdated()
+     {
+         return $this->updated;
+     }
+ 
+     /**
+      * Set created
+      *
+      * @ORM\PrePersist
+      */
+    public function setCreated()
+    {
+          $this->created = new \DateTime();
+          $this->updated = new \DateTime();
+    }
+  
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+     
+    /*************************************
+     * FIN DE BLOQUE ATRIBUTOS COMUNES   *
+     *************************************/
     /**
      * @var int
      *
@@ -63,12 +128,20 @@ class Passenger
     /***********************
      * INICIO ASOCIACIONES *
      ***********************/
-    
-
+    /**
+     * @var \StrApp\TravelAgencyApiBundle\Entity\Travel
+     * Una persona tienes Muchos viajes.
+     * @ORM\OneToMany(targetEntity="travel", mappedBy="passenger", cascade={"persist", "remove"})
+     */
+    private $travels;
+     
     /***********************
      *   FIN ASOCIACIONES  *
      ***********************/
-
+    
+    public function __construct() {
+        $this->travels = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -199,5 +272,38 @@ class Passenger
     {
         return $this->lastName;
     }
-}
 
+    /**
+     * Add travel
+     *
+     * @param \StrApp\TravelAgencyApiBundle\Entity\travel $travel
+     *
+     * @return Passenger
+     */
+    public function addTravel(\StrApp\TravelAgencyApiBundle\Entity\travel $travel)
+    {
+        $this->travels[] = $travel;
+
+        return $this;
+    }
+
+    /**
+     * Remove travel
+     *
+     * @param \StrApp\TravelAgencyApiBundle\Entity\travel $travel
+     */
+    public function removeTravel(\StrApp\TravelAgencyApiBundle\Entity\travel $travel)
+    {
+        $this->travels->removeElement($travel);
+    }
+
+    /**
+     * Get travels
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTravels()
+    {
+        return $this->travels;
+    }
+}

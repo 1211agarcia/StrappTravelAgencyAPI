@@ -5,16 +5,17 @@ namespace StrApp\TravelAgencyApiBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Agency
+ * Airport
  * La clase hace referencia a las localidades de origen y destino
  * de los viajes (travel).
  *
  * @author Armando Garcia
  *
- * @ORM\Table(name="agency")
- * @ORM\Entity(repositoryClass="StrApp\TravelAgencyApiBundle\Repository\AgencyRepository")
+ * @ORM\Table(name="airport")
+ * @ORM\Entity(repositoryClass="StrApp\TravelAgencyApiBundle\Repository\AirportRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class Agency
+class Airport
 {
     /**
      * @var int
@@ -25,19 +26,83 @@ class Agency
      */
     private $id;
 
+    /**************************************
+    * INICIO DE BLOQUE ATRIBUTOS COMUNES  *
+    *                                     *
+    * Atributos para labores de auditoria *
+    **************************************/
+    
     /**
-     * @var string
+     * Guarda la fecha de actualizacion
+     * @var \DateTime
+     * @ORM\Column(name="updated", type="datetime")
      *
-     * @ORM\Column(name="agencyCode", type="string", length=255)
      */
-    private $agencyCode;
+     private $updated;
+     /**
+     * Guarda la fecha de actualizacion
+     * @var \DateTime
+     * @ORM\Column(name="created", type="datetime")
+     */
+     private $created;
+ 
+     /**
+      * Set updated
+      * @ORM\PreUpdate 
+      */
+     public function setUpdated()
+     {
+         $this->updated = new \DateTime();
+     }
+ 
+     /**
+      * Get updated
+      *
+      * @return \DateTime
+      */
+     public function getUpdated()
+     {
+         return $this->updated;
+     }
+ 
+     /**
+      * Set created
+      *
+      * @ORM\PrePersist
+      */
+    public function setCreated()
+    {
+          $this->created = new \DateTime();
+          $this->updated = new \DateTime();
+    }
+  
+      /**
+       * Get created
+       *
+       * @return \DateTime
+       */
+     public function getCreated()
+     {
+         return $this->created;
+     }
+     
+     /*************************************
+     * FIN DE BLOQUE ATRIBUTOS COMUNES    *
+     **************************************/ 
 
     /**
      * @var string
      *
-     * @ORM\Column(name="agencyName", type="string", length=255)
+     * @ORM\Column(name="airportCode", type="string", length=255)
      */
-    private $agencyName;
+    private $airportCode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="airportName", type="string", length=255)
+     */
+    private $airportName;
 
     /**
      * @var string
@@ -81,18 +146,6 @@ class Agency
      */
     private $region;
 
-
-    /***********************
-     * INICIO ASOCIACIONES *
-     ***********************/
-    
-
-
-    /***********************
-     *   FIN ASOCIACIONES  *
-     ***********************/
-
-
     /**
      * Get id
      *
@@ -104,51 +157,51 @@ class Agency
     }
 
     /**
-     * Set agencyCode
+     * Set airportCode
      *
-     * @param string $agencyCode
+     * @param string $airportCode
      *
-     * @return Agency
+     * @return Airport
      */
-    public function setAgencyCode($agencyCode)
+    public function setAirportCode($airportCode)
     {
-        $this->agencyCode = $agencyCode;
+        $this->airportCode = $airportCode;
 
         return $this;
     }
 
     /**
-     * Get agencyCode
+     * Get airportCode
      *
      * @return string
      */
-    public function getAgencyCode()
+    public function getAirportCode()
     {
-        return $this->agencyCode;
+        return $this->airportCode;
     }
 
     /**
-     * Set agencyName
+     * Set airportName
      *
-     * @param string $agencyName
+     * @param string $airportName
      *
-     * @return Agency
+     * @return Airport
      */
-    public function setAgencyName($agencyName)
+    public function setAirportName($airportName)
     {
-        $this->agencyName = $agencyName;
+        $this->airportName = $airportName;
 
         return $this;
     }
 
     /**
-     * Get agencyName
+     * Get airportName
      *
      * @return string
      */
-    public function getAgencyName()
+    public function getAirportName()
     {
-        return $this->agencyName;
+        return $this->airportName;
     }
 
     /**
@@ -156,7 +209,7 @@ class Agency
      *
      * @param string $officePhone
      *
-     * @return Agency
+     * @return Airport
      */
     public function setOfficePhone($officePhone)
     {
@@ -180,7 +233,7 @@ class Agency
      *
      * @param string $streetAddress
      *
-     * @return Agency
+     * @return Airport
      */
     public function setStreetAddress($streetAddress)
     {
@@ -204,7 +257,7 @@ class Agency
      *
      * @param string $city
      *
-     * @return Agency
+     * @return Airport
      */
     public function setCity($city)
     {
@@ -228,7 +281,7 @@ class Agency
      *
      * @param string $stateOrProvince
      *
-     * @return Agency
+     * @return Airport
      */
     public function setStateOrProvince($stateOrProvince)
     {
@@ -252,7 +305,7 @@ class Agency
      *
      * @param string $codePostal
      *
-     * @return Agency
+     * @return Airport
      */
     public function setCodePostal($codePostal)
     {
@@ -276,7 +329,7 @@ class Agency
      *
      * @param string $region
      *
-     * @return Agency
+     * @return Airport
      */
     public function setRegion($region)
     {
@@ -295,4 +348,3 @@ class Agency
         return $this->region;
     }
 }
-
