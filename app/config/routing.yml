@@ -1,4 +1,8 @@
 travel_agency:
     resource: "@TravelAgencyApiBundle/Controller/"
     type:     annotation
-    prefix:   /
+    prefix:   /api
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
