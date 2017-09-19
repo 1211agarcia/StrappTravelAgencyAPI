@@ -3,6 +3,7 @@
 namespace StrApp\TravelAgencyApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use StrApp\TravelAgencyApiBundle\Entity\Travel;
 
 /**
@@ -131,7 +132,7 @@ class Passenger
     /**
      * @var \StrApp\TravelAgencyApiBundle\Entity\Travel
      * Una persona tienes Muchos viajes.
-     * @ORM\OneToMany(targetEntity="travel", mappedBy="passenger", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Travel", mappedBy="passenger", cascade={"persist", "remove"})
      */
     private $travels;
      
@@ -140,7 +141,7 @@ class Passenger
      ***********************/
     
     public function __construct() {
-        $this->travels = new ArrayCollection();
+        $this->travels = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -276,11 +277,11 @@ class Passenger
     /**
      * Add travel
      *
-     * @param \StrApp\TravelAgencyApiBundle\Entity\travel $travel
+     * @param \StrApp\TravelAgencyApiBundle\Entity\Travel $travel
      *
      * @return Passenger
      */
-    public function addTravel(\StrApp\TravelAgencyApiBundle\Entity\travel $travel)
+    public function addTravel(\StrApp\TravelAgencyApiBundle\Entity\Travel $travel)
     {
         $this->travels[] = $travel;
 
@@ -290,9 +291,9 @@ class Passenger
     /**
      * Remove travel
      *
-     * @param \StrApp\TravelAgencyApiBundle\Entity\travel $travel
+     * @param \StrApp\TravelAgencyApiBundle\Entity\Travel $travel
      */
-    public function removeTravel(\StrApp\TravelAgencyApiBundle\Entity\travel $travel)
+    public function removeTravel(\StrApp\TravelAgencyApiBundle\Entity\Travel $travel)
     {
         $this->travels->removeElement($travel);
     }

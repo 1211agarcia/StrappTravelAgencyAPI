@@ -3,6 +3,7 @@
 namespace StrApp\TravelAgencyApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use StrApp\TravelAgencyApiBundle\Entity\Airport;
 use StrApp\TravelAgencyApiBundle\Entity\Passenger;
 
@@ -128,7 +129,7 @@ class Travel
      *
      * @var \StrApp\TravelAgencyApiBundle\Entity\Airport
      * Muchos Travel tienen como origen un Airport.
-     * @ORM\ManyToOne(targetEntity="airport", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Airport", cascade={"persist"})
      * @ORM\JoinColumn(name="originairport_id", referencedColumnName="id")
      */
     private $originAirport;
@@ -137,7 +138,7 @@ class Travel
      *
      * @var \StrApp\TravelAgencyApiBundle\Entity\Airport
      * Muchos Travel tienen como destino un Airport.
-     * @ORM\ManyToOne(targetEntity="airport", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Airport", cascade={"persist"})
      * @ORM\JoinColumn(name="destinationairport_id", referencedColumnName="id")
      */
     private $destinationAirport;
@@ -146,7 +147,7 @@ class Travel
       *
       * @var \StrApp\TravelAgencyApiBundle\Entity\Passenger
       * Muchos Travel es cubierto por un Passeger.
-      * @ORM\ManyToOne(targetEntity="passenger", inversedBy="travels")
+      * @ORM\ManyToOne(targetEntity="Passenger", inversedBy="travels")
       * @ORM\JoinColumn(name="passenger_id", referencedColumnName="id")
       */
     private $passenger;
@@ -265,11 +266,11 @@ class Travel
     /**
      * Set originAirport
      *
-     * @param \StrApp\TravelAgencyApiBundle\Entity\airport $originAirport
+     * @param \StrApp\TravelAgencyApiBundle\Entity\Airport $originAirport
      *
      * @return Travel
      */
-    public function setOriginAirport(\StrApp\TravelAgencyApiBundle\Entity\airport $originAirport = null)
+    public function setOriginAirport(\StrApp\TravelAgencyApiBundle\Entity\Airport $originAirport = null)
     {
         $this->originAirport = $originAirport;
 
@@ -279,7 +280,7 @@ class Travel
     /**
      * Get originAirport
      *
-     * @return \StrApp\TravelAgencyApiBundle\Entity\airport
+     * @return \StrApp\TravelAgencyApiBundle\Entity\Airport
      */
     public function getOriginAirport()
     {
@@ -289,11 +290,11 @@ class Travel
     /**
      * Set destinationAirport
      *
-     * @param \StrApp\TravelAgencyApiBundle\Entity\airport $destinationAirport
+     * @param \StrApp\TravelAgencyApiBundle\Entity\Airport $destinationAirport
      *
      * @return Travel
      */
-    public function setDestinationAirport(\StrApp\TravelAgencyApiBundle\Entity\airport $destinationAirport = null)
+    public function setDestinationAirport(\StrApp\TravelAgencyApiBundle\Entity\Airport $destinationAirport = null)
     {
         $this->destinationAirport = $destinationAirport;
 
@@ -303,7 +304,7 @@ class Travel
     /**
      * Get destinationAirport
      *
-     * @return \StrApp\TravelAgencyApiBundle\Entity\airport
+     * @return \StrApp\TravelAgencyApiBundle\Entity\Airport
      */
     public function getDestinationAirport()
     {
@@ -313,11 +314,11 @@ class Travel
     /**
      * Set passenger
      *
-     * @param \StrApp\TravelAgencyApiBundle\Entity\passenger $passenger
+     * @param \StrApp\TravelAgencyApiBundle\Entity\Passenger $passenger
      *
      * @return Travel
      */
-    public function setPassenger(\StrApp\TravelAgencyApiBundle\Entity\passenger $passenger = null)
+    public function setPassenger(\StrApp\TravelAgencyApiBundle\Entity\Passenger $passenger = null)
     {
         $this->passenger = $passenger;
 
@@ -327,7 +328,7 @@ class Travel
     /**
      * Get passenger
      *
-     * @return \StrApp\TravelAgencyApiBundle\Entity\passenger
+     * @return \StrApp\TravelAgencyApiBundle\Entity\Passenger
      */
     public function getPassenger()
     {
