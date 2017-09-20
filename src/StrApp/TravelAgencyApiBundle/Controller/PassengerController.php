@@ -54,7 +54,7 @@ class PassengerController extends FOSRestController
      * @ApiDoc(
      *     resource=true,
      *     resourceDescription="Crea un nuevo Pasajero",
-     *     description="",
+     *     description="Crea un nuevo Pasajero",
      *     views = { "passenger","default" },
      *     parameters={
      *          {"name"="firstName", "dataType"="string","description"="Nombre del pasajero", "required"="true"},
@@ -129,8 +129,8 @@ class PassengerController extends FOSRestController
      * @return json
      * @ApiDoc(
      *     resource=true,
-     *     resourceDescription="Crea un nuevo Pasajero",
-     *     description="",
+     *     resourceDescription="Actualiza un Pasajero",
+     *     description="Actualiza un Pasajero",
      *     views = { "passenger","default" },
      *     parameters={
      *          {"name"="id", "dataType"="string","description"="Id del pasajero", "required"="true"},

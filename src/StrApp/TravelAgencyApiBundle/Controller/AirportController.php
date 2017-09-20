@@ -135,8 +135,8 @@ class AirportController extends FOSRestController
      * @return json
      * @ApiDoc(
      *     resource=true,
-     *     resourceDescription="Crea un nuevo Aeropuerto",
-     *     description="",
+     *     resourceDescription="Actualiza un nuevo Aeropuerto",
+     *     description="Actualiza un Aeropuerto",
      *     views = { "airport","default" },
      *     parameters={
      *          {"name"="id", "dataType"="string","description"="Id del aeropuerto", "required"="true"},

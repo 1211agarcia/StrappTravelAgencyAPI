@@ -133,8 +133,8 @@ class TravelController extends FOSRestController
      * @return json
      * @ApiDoc(
      *     resource=true,
-     *     resourceDescription="Crea un nuevo Vuelo",
-     *     description="",
+     *     resourceDescription="Actualiza un Vuelo",
+     *     description="Actualiza un Vuelo",
      *     views = { "travel","default" },
      *     parameters={
      *          {"name"="id", "dataType"="string","description"="Id del vuelo", "required"="true"},
