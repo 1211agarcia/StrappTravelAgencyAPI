@@ -13,7 +13,16 @@ class TravelType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('updated')->add('created')->add('travelCode')->add('numberPlaces')->add('travelDate')->add('additionalInformation')->add('originAirport')->add('destinationAirport')->add('passenger');
+        $builder
+        ->add('updated')
+        ->add('created')
+        ->add('travelCode')
+        ->add('numberPlaces')
+        ->add('travelDate')
+        ->add('additionalInformation')
+        ->add('originAirport')
+        ->add('destinationAirport')
+        ->add('passenger');
     }
     
     /**

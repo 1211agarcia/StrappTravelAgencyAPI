@@ -5,132 +5,207 @@ namespace StrApp\TravelAgencyApiBundle\Controller;
 use StrApp\TravelAgencyApiBundle\Entity\Travel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\View\View;
 
 /**
  * Travel controller.
  *
  * @Route("travel")
  */
-class TravelController extends Controller
+class TravelController extends FOSRestController
 {
     /**
-     * Lists all travel entities.
-     *
-     * @Route("/", name="travel_index")
-     * @Method("GET")
+     * Se obtiene todos los vuelos existentes en la base de datos.
+     * @return json
+     * @ApiDoc(
+     *     resource=true,
+     *     resourceDescription="Se obtiene todos los vuelos existentes en la base de datos",
+     *     description="Retorna todos los vuelos",
+     *     views = { "travel","default" },
+     *     statusCodes={
+     *         200="OK",
+     *         400="Los datos son incorrectos",
+     *         404="Vuelos no encontrado",
+     *         500="Error"
+     *     }
+     *  )
+     * @Rest\Get("/all", name="travel_getAll")
      */
-    public function indexAction()
+    public function getAllAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $travels = $em->getRepository('TravelAgencyApiBundle:Travel')->findAll();
 
-        return $this->render('travel/index.html.twig', array(
-            'travels' => $travels,
-        ));
+        if ($travels === null) {
+            return new View("there are no travels exist", Response::HTTP_NOT_FOUND);
+        }
+        return $travels;
     }
 
     /**
-     * Creates a new travel entity.
-     *
-     * @Route("/new", name="travel_new")
-     * @Method({"GET", "POST"})
+     * Creates a new travel.
+     * @return json
+     * @ApiDoc(
+     *     resource=true,
+     *     resourceDescription="Crea un nuevo Vuelo",
+     *     description="Crea un nuevo Vuelo",
+     *     views = { "travel","default" },
+     *     parameters={
+     *          {"name"="travelCode", "dataType"="string","description"="Codigo del vuelo", "required"="true"},
+     *          {"name"="travelDate", "dataType"="datetime","description"="Fecha del vuelo", "required"="true"},
+     *          {"name"="additionalInformation", "dataType"="string","description"="Telefono del vuelo", "required"="false"},
+     *          {"name"="destinationAirport", "dataType"="Airport","description"="Aeropuerto destino del vuelo", "required"="true"},
+     *          {"name"="originAirport", "dataType"="Airport","description"="Aeropuerto origen del vuelo", "required"="true"},
+     *          {"name"="numberPlaces", "dataType"="integer","description"="Numero de plazas del vuelo", "required"="true"},
+     *          {"name"="passenger", "dataType"="string","description"="Passenger del vuelo", "required"="true"},
+     *      },
+     *     statusCodes={
+     *         201="El vuelo fue creado con exito",
+     *         400="Los datos son incorrectos",
+     *         404="Vuelos no encontrado",
+     *         500="Error"
+     *     }
+     *  )
+     * @Rest\Post("/create", name="travel_create")
      */
-    public function newAction(Request $request)
+    public function createAction(Request $request)
     {
         $travel = new Travel();
-        $form = $this->createForm('StrApp\TravelAgencyApiBundle\Form\TravelType', $travel);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        $travel->setTravelCode($request->get('travelCode'));
+        $travel->setTravelName($request->get('travelDate'));
+        $travel->setAdditionalInformation($request->get('additionalInformation'));
+        $travel->setDestinationAirport($request->get('destinationAirport'));
+        $travel->setOriginAirport($request->get('originAirport'));
+        $travel->setNumberPlaces($request->get('numberPlaces'));
+        $travel->setRegion($request->get('passenger'));
+        
+        try
+        {
             $em = $this->getDoctrine()->getManager();
             $em->persist($travel);
             $em->flush();
-
-            return $this->redirectToRoute('travel_show', array('id' => $travel->getId()));
+            return new View("Travel Added Successfully", Response::HTTP_OK);
         }
-
-        return $this->render('travel/new.html.twig', array(
-            'travel' => $travel,
-            'form' => $form->createView(),
-        ));
+        catch(\Exception $exception)
+        {
+            return new View("NULL VALUES ARE NOT ALLOWED", Response::HTTP_NOT_ACCEPTABLE);
+        }
     }
 
     /**
-     * Finds and displays a travel entity.
-     *
-     * @Route("/{id}", name="travel_show")
-     * @Method("GET")
+     * Finds and return a travel.
+     * @return json
+     * @ApiDoc(
+     *     resource=true,
+     *     resourceDescription="Se obtiene todos los vuelos existentes en la base de datos",
+     *     description="Retorna todos los vuelos",
+     *     views = { "travel","default" },
+     *      parameters={
+     *          {"name"="id", "dataType"="integer","description"="Id del vuelo a encontrar", "required"="true"}
+     *      },
+     *     statusCodes={
+     *         200="OK",
+     *         400="Los datos son incorrectos",
+     *         404="Vuelo no encontrado",
+     *         500="Error"
+     *     }
+     *  )
+     * @Rest\Get("/read", name="travel_read")
      */
-    public function showAction(Travel $travel)
+    public function readAction(Request $request)
     {
-        $deleteForm = $this->createDeleteForm($travel);
-
-        return $this->render('travel/show.html.twig', array(
-            'travel' => $travel,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        $em = $this->getDoctrine()->getManager();        
+        $travel = $em->getRepository('TravelAgencyApiBundle:Travel')->find($request->get('id'));
+        if ($travel === null) {
+            return new View("there are no travel exist", Response::HTTP_NOT_FOUND);
+        }
+        return $travel;
     }
 
     /**
-     * Displays a form to edit an existing travel entity.
+     * Update a new travel.
+     * @return json
+     * @ApiDoc(
+     *     resource=true,
+     *     resourceDescription="Crea un nuevo Vuelo",
+     *     description="",
+     *     views = { "travel","default" },
+     *     parameters={
+     *          {"name"="id", "dataType"="string","description"="Id del vuelo", "required"="true"},
+     *          {"name"="travelCode", "dataType"="string","description"="Codigo del vuelo", "required"="true"},
+     *          {"name"="travelDate", "dataType"="datetime","description"="Fecha del vuelo", "required"="true"},
+     *          {"name"="additionalInformation", "dataType"="string","description"="Telefono del vuelo", "required"="false"},
+     *          {"name"="destinationAirport", "dataType"="Airport","description"="Aeropuerto destino del vuelo", "required"="true"},
+     *          {"name"="originAirport", "dataType"="Airport","description"="Aeropuerto origen del vuelo", "required"="true"},
+     *          {"name"="numberPlaces", "dataType"="integer","description"="Numero de plazas del vuelo", "required"="true"},
+     *          {"name"="passenger", "dataType"="string","description"="Passenger del vuelo", "required"="true"},
+     *      },
+     *     statusCodes={
+     *         200="El vuelo fue actualizado con exito",
+     *         400="Los datos son incorrectos",
+     *         404="Vuelo no encontrado",
+     *         500="Error"
+     *     }
+     *  )
      *
-     * @Route("/{id}/edit", name="travel_edit")
-     * @Method({"GET", "POST"})
+     * @Rest\Post("/update", name="travel_update")
      */
-    public function editAction(Request $request, Travel $travel)
+    public function updateAction(Request $request)
     {
-        $deleteForm = $this->createDeleteForm($travel);
-        $editForm = $this->createForm('StrApp\TravelAgencyApiBundle\Form\TravelType', $travel);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('travel_edit', array('id' => $travel->getId()));
+        $em = $this->getDoctrine()->getManager();        
+        $travel = $em->getRepository('TravelAgencyApiBundle:Travel')->find($request->get('id'));
+        if ($travel === null) {
+            return new View("there are no travel exist", Response::HTTP_NOT_FOUND);
         }
-
-        return $this->render('travel/edit.html.twig', array(
-            'travel' => $travel,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        $travel->setTravelCode($request->get('travelCode'));
+        $travel->setTravelName($request->get('travelDate'));
+        $travel->setAdditionalInformation($request->get('additionalInformation'));
+        $travel->setDestinationAirport($request->get('destinationAirport'));
+        $travel->setOriginAirport($request->get('originAirport'));
+        $travel->setNumberPlaces($request->get('numberPlaces'));
+        $travel->setRegion($request->get('passenger'));
+        $em->flush();          
+        return new View("Travel Updated Successfully", Response::HTTP_OK);
+        
     }
 
     /**
      * Deletes a travel entity.
+     * @return json
+     * @ApiDoc(
+     *     resource=true,
+     *     resourceDescription="Se obtiene todos los vuelos existentes en la base de datos",
+     *     description="Retorna todos los vuelos",
+     *     views = { "travel","default" },
+     *     parameters={
+     *          {"name"="id", "dataType"="string","description"="Id del vuelo", "required"="true"},
+     *      },
+     *      statusCodes={
+     *         201="El vuelo fue eliminado con exito",
+     *         400="Los datos son incorrectos",
+     *         404="Vuelos no encontrado",
+     *         500="Error"
+     *     }
+     *  )
      *
-     * @Route("/{id}", name="travel_delete")
-     * @Method("DELETE")
+     * @Rest\Delete("/delete", name="travel_delete")
      */
-    public function deleteAction(Request $request, Travel $travel)
+    public function deleteAction(Request $request)
     {
-        $form = $this->createDeleteForm($travel);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($travel);
-            $em->flush();
+        $em = $this->getDoctrine()->getManager();        
+        $travel = $em->getRepository('TravelAgencyApiBundle:Travel')->find($request->get('id'));
+        if ($travel === null) {
+            return new View("there are no travel exist", Response::HTTP_NOT_FOUND);
         }
+        $em->remove($travel);
+        $em->flush();
 
-        return $this->redirectToRoute('travel_index');
-    }
-
-    /**
-     * Creates a form to delete a travel entity.
-     *
-     * @param Travel $travel The travel entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Travel $travel)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('travel_delete', array('id' => $travel->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
+        return new View("Travel Deleted Successfully", Response::HTTP_OK);
     }
 }
